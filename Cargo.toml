@@ -1,0 +1,8 @@
+[package]
+name = "vpn_handler"
+version = "1.0.1"
+edition = "2021"
+
+[dependencies]
+rand = "0.8.5"
+nix = "0.26"
