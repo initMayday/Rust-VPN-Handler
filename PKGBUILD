@@ -1,17 +1,32 @@
-pkgname=vpn_handler
-pkgver=1.0.1
-pkgrel=2
-makedepends=('rust' 'cargo')
+# Maintainer: initMayday@protonmail.com
+
+_pkgname=vpn_handler
+pkgname="$_pkgname-git"
+pkgver=r2.ff85586
+pkgrel=1
+pkgdesc="Tool to quickly bring vpns up and down via wireguard"
+arch=('any')
+url="https://github.com/initMayday/Rust-VPN-Handler"
+makedepends=('git' 'rust' 'cargo')
 depends=('wireguard-tools' 'openresolv')
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
-license=('GPL3')
+license=('CC-BY-NC-SA-4.0')
+source=("$_pkgname::git+$url")
+sha256sums=('SKIP')
+provides=("$_pkgname")
+conflicts=("$_pkgname")
 
 build() {
-	export RUST_TOOLCHAIN=nightly
+    cd "$_pkgname"
 	export CARGO_TARGET_DIR=target
 	cargo build --release --all-features
 }
 
+pkgver() {
+	cd "$_pkgname"
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
 package() {
-	install -Dm0755 -t "$pkgdir/usr/bin" "target/release/$pkgname"
+    cd "$_pkgname"
+	install -Dm0755 -t "$pkgdir/usr/bin" "target/release/$_pkgname"
 }
