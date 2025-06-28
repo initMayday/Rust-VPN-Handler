@@ -1,7 +1,7 @@
 # Maintainer: initMayday@protonmail.com
 
 _pkgname=vpn_handler
-pkgname="$_pkgname-git"
+pkgname="vpn-handler-git"
 pkgver=r2.ff85586
 pkgrel=1
 pkgdesc="Tool to quickly bring vpns up and down via wireguard"
