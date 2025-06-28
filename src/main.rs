@@ -26,7 +26,7 @@ fn main()
         "up" => {up_vpn(); return;},
         "down" => {down_vpn(); return;},
         "swap" => {swap_vpn(); return;},
-        "which" => {which_vpn(); return;},
+        "which" | "status" => {which_vpn(); return;},
         "help" => {
         println!("\nARGUMENTS:\nvpn_handler up    - Enable a wireguard interface\nvpn_handler down  - disable the active wireguard interface\nvpn_handler swap  - disable the active wireguard interface, and enable another\nvpn_handler which - print the active wireguard interface\nvpn_handler help  - print arguments to vpn_handler\n"); return;
         },
@@ -67,7 +67,8 @@ fn up_vpn()
         println!("[LOG] Enabled {}", chosen_server);
     } else {
         println!("[ERROR] Failed to enable: {}", chosen_server);
-        println!("{:?}", output.stderr);
+        println!("{}", String::from_utf8_lossy(&output.stderr));
+        std::process::exit(-1);
     }
 }
 
@@ -92,7 +93,8 @@ fn down_vpn()
         println!("[LOG] Disabled {}", disabled_vpn);
     } else {
         println!("[ERROR] Failed to disable: {}", disabled_vpn);
-        println!("{:?}", output.stderr);
+        println!("{}", String::from_utf8_lossy(&output.stderr));
+        std::process::exit(-1);
     }
 }
 
@@ -122,6 +124,12 @@ fn get_active_vpn() -> Option<String>
         .arg("show")
         .output()
         .expect("failed to execute process");
+
+    if !vpn_output.status.success() {
+        println!("[ERROR] Failed to get active VPN");
+        println!("{}", String::from_utf8_lossy(&vpn_output.stderr));
+        std::process::exit(-1);
+    }
     
     let vpn_output = String::from_utf8(vpn_output.stdout).unwrap();
     let chunks: Vec<_> = vpn_output.split(" ").collect();
